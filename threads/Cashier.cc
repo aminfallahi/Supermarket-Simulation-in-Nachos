@@ -12,10 +12,11 @@ int Cashier::lastId;
 
 Cashier::Cashier()
 {
-	id=lastId;
-	numInLine=0;
-	status=false;
-	printf("NEW CASHIER with id %d lastId %d\n",id,lastId);
+	id = lastId;
+	numInLine = 0;
+	status = false;
+	printf("NEW CASHIER with id %d lastId %d\n", id, lastId);
+	moreThan3Time = 0;
 	//lastId++;
 }
 
@@ -27,13 +28,14 @@ Cashier::~Cashier()
 {
 }
 
-
-void Cashier::open(){
-	status=true;
+void Cashier::open()
+{
+	status = true;
 }
 
-void Cashier::close(){
-	status=false;
+void Cashier::close()
+{
+	status = false;
 }
 
 bool Cashier::isOpen()
@@ -41,52 +43,74 @@ bool Cashier::isOpen()
 	return this->status;
 }
 
-bool Cashier::hasRoom(){
+bool Cashier::hasRoom()
+{
 	//printf("hasRoom: cashier %d has %d customers in line\n",id,numInLine);
-	if (numInLine<maxCustomers)
+	if (numInLine < maxCustomers)
 		return true;
 	return false;
 }
 
-void Cashier::run(){
+void Cashier::run()
+{
+	//FOR STATS: keep track of time that cashier has more than 3 customers waiting in line
+	if (numInLine > 3)
+		moreThan3Time++;
+
 	//get front of the line
-	if (numInLine>0){
-		Customer *cust=line.Front();
+	if (numInLine > 0) {
+		Customer *cust = line.Front();
 		cust->incrementTimeProcessed();
 		//printf("Customer %d has waited in line for %d seconds but his processing time is %d seconds\n",cust->getId(),cust->getTimeProcessed(),cust->getNumOfItems()*scanTime+startUpTime+closeTime);
-		if (cust->getTimeProcessed()==cust->getNumOfItems()*scanTime+startUpTime+closeTime){
+		if (cust->getTimeProcessed() == cust->getNumOfItems() * scanTime + startUpTime + closeTime) {
 			//this customer is done
-			printf("Customer %d is done.\n",cust->getId());
+			printf("Customer %d is done.\n", cust->getId());
 			cust->setDone();
 			line.RemoveFront();
 			numInLine--;
 		}
 
 	}
-	
+
+
+
 }
 
 bool Cashier::isEmpty()
 {
-	if (line.NumInList()==0)
+	if (line.NumInList() == 0)
 		return true;
 	return false;
 }
 
-bool operator==(const Cashier &c1, const Cashier &c2){
-	return c1.id==c2.id;
+bool operator==(const Cashier &c1, const Cashier &c2)
+{
+	return c1.id == c2.id;
 }
 
-void Cashier::addCustomer(Customer *cust){
+void Cashier::addCustomer(Customer *cust)
+{
 	line.Append(cust);
 	numInLine++;
-	printf("Cashier: Adding customer %d to cashier %d line. Now it has %d customers\n",cust->getId(),id,numInLine);
+	printf("Cashier: Adding customer %d to cashier %d line. Now it has %d customers\n", cust->getId(), id, numInLine);
 }
 
-int Cashier::getId(){
+int Cashier::getId()
+{
 	return id;
 }
 
-int Cashier::getNumInLine(){
+int Cashier::getNumInLine()
+{
 	return numInLine;
+}
+
+void Cashier::resetMoreThan3Time()
+{
+	moreThan3Time = 0;
+}
+
+int Cashier::getMoreThan3Time()
+{
+	return moreThan3Time;
 }

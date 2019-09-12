@@ -15,8 +15,8 @@
 class SuperMarket {
 public:
     static int peakHours[3]; //Peak hours are between 4 to 6 pm and random number of customers arriving for a check out is between 5 and 10 every minute.
-    const static int maxCashiers=10;
-    const static int minCashiers=2;
+    const static int maxCashiers = 10;
+    const static int minCashiers = 2;
     SuperMarket();
     //SuperMarket(const SuperMarket& orig);
     virtual ~SuperMarket();
@@ -25,6 +25,8 @@ public:
     Cashier* openNewCashier();
     int getNumOfOpenCashiers();
     void run();
+    int getWaitingQueueSize();
+    int* getCashiersStats();
 private:
     List<Cashier*> cashiers;
     List<Customer*> waitingQueue;

@@ -32,11 +32,15 @@ public:
     friend bool operator==(const Cashier&,const Cashier&);
     int getId();
     int getNumInLine();
+    void resetMoreThan3Time(); //FOR STATS
+    int getMoreThan3Time(); //FOR STATS
+    
 private:
     bool status; //open or close
     List<Customer*> line;
     int id;
     int numInLine;
+    int moreThan3Time; //FOR STATS
 };
 
 #endif	/* CASHIER_H */

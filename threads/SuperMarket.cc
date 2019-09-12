@@ -82,11 +82,10 @@ void SuperMarket::addCustomer(Customer *cust)
 						break;
 					}
 				}
-				printf("Adding customer %d to waiting queue\n",cust->getId());
+				printf("Adding customer %d to waiting queue\n", cust->getId());
 				waitingQueue.Append(cust);
 
-			}
-			else
+			} else
 				printf("OOO We can't open new cashier. We already have 10.\n");
 
 		}
@@ -165,11 +164,31 @@ void SuperMarket::run()
 			}
 		}
 	}
-	
+
 	//add one second to the waiting time of all customers who have processingTime=0
 	ListIterator<Customer*> iteratorCust(&customers);
-	for (; !iteratorCust.IsDone(); iteratorCust.Next()){
-		if (iteratorCust.Item()->getTimeProcessed()==0)
+	for (; !iteratorCust.IsDone(); iteratorCust.Next()) {
+		if (iteratorCust.Item()->getTimeProcessed() == 0)
 			iteratorCust.Item()->incrementWaitTime();
 	}
+}
+
+int SuperMarket::getWaitingQueueSize()
+{
+	return waitingQueue.NumInList();
+}
+
+int* SuperMarket::getCashiersStats()
+{
+	static int t[10];
+	ListIterator<Cashier*> iterator(&cashiers);
+
+	int i = 0;
+	for (; !iterator.IsDone(); iterator.Next()) {
+		t[i] = iterator.Item()->getMoreThan3Time();
+		iterator.Item()->resetMoreThan3Time();
+		i++;
+	}
+
+	return t;
 }
