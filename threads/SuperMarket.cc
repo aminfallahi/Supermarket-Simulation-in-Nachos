@@ -48,13 +48,13 @@ void SuperMarket::addCustomer(Customer *cust)
 
 	bool custAssigned = false;
 
-	printf("Adding customer %d to supermarket\n", cust->getId());
+	//printf("Adding customer %d to supermarket\n", cust->getId());
 
 	for (; !iterator.IsDone(); iterator.Next()) {
 		if (!custAssigned && iterator.Item()->isOpen() && iterator.Item()->hasRoom()) {
 			iterator.Item()->addCustomer(cust);
 			custAssigned = true;
-			printf("Assigning customer %d to cashier %d.\n", cust->getId(), iterator.Item()->getId());
+			//printf("Assigning customer %d to cashier %d.\n", cust->getId(), iterator.Item()->getId());
 		}
 	}
 	if (!custAssigned) {

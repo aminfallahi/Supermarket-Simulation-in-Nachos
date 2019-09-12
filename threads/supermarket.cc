@@ -14,6 +14,12 @@ runSuperMarket()
 	SuperMarket sm;
 	srand(time(NULL));
 	Customer::lastId = 0;
+	char stats[10000];
+	/*	int a=5;
+		sprintf(stats,"hello %d %d",a,a);
+		sprintf(stats,"%s hello",stats);
+		printf(stats);
+		exit(1);*/
 
 	List<Customer*> Customers;
 
@@ -38,14 +44,14 @@ runSuperMarket()
 		List<Customer*> hourCustomers;
 
 		for (minute = 0; minute < 60; minute++) {
-
+			printf("----------\nTIME: %02d:%02d\n", hour, minute);
 			if (sm.isPeakHour(hour))
 				custNum = rand() % 6 + 5; //peak hours 5-10 customers per minute
 			else
 				custNum = rand() % 6; //reg hours 0-5 customers per minute
 			if (custNum > 0)
 				custSec = 60 / custNum;
-			printf("Hour is %d cust num is %d\n", hour, custNum);
+			//printf("Hour is %d cust num is %d\n", hour, custNum);
 			for (second = 0; second < 60; second++) {
 				if (custNum != 0 and second % custSec == 0) {
 					sumCust++;
@@ -85,25 +91,25 @@ runSuperMarket()
 			maxServTime = (maxServTime < st) ? st : maxServTime;
 		}
 
-		int* moreThan3 = sm.getCashiersStats();
-		printf("Hour %d; Cashier stats: ", hour);
-		int i;
-		for (i = 0; i < 10; i++) {
-			printf("%d ", moreThan3[i]);
-		}
-
-		printf("Hour %d; Average number of customers arriving for checkout: %d; "
-			"avg/min/max wait time: %d/%d/%d; "
-			"avg/min/max service time: %d/%d/%d "
-			"avg open lines: %d; "
-			"max open lines: %d; "
-			"avg/min/max waiting queue size: %d/%d/%d\n",
-			hour, sumCust / 60,
-			sumWaitTime / sumCust, minWaitTime, maxWaitTime,
-			sumServTime / sumCust, minServTime, maxServTime,
+		sprintf(stats, "%s\n----------\nHour %d:\n  Average number of customers arriving for checkout: %d;\n"
+			"   average/shortest/longest waiting time: %d / %d / %d\n"
+			"   average/shortest/longest service time: %d / %d / %d\n"
+			"   average number of open lines: %d\n"
+			"   maximum number of open lines: %d\n"
+			"   average/smallest/largest number of customers in the waiting queue: %d / %d / %d\n",
+			stats, hour, sumCust / 60,
+			sumWaitTime / sumCust/60, minWaitTime/60, maxWaitTime/60,
+			sumServTime / sumCust/60, minServTime/60, maxServTime/60,
 			sumOpenLines / 60,
 			maxOpenLines,
 			sumWaitingQueue / 60, minWaitingQueue, maxWaitingQueue);
+
+		int* moreThan3 = sm.getCashiersStats();
+		sprintf(stats, "%saverage time each casher will have more than 3 customers standing in line: \n", stats, hour);
+		int i;
+		for (i = 0; i < 10; i++) {
+			sprintf(stats, "%s      cashier #%d %d\n", stats, i, moreThan3[i]/60);
+		}
 
 	}
 
@@ -120,11 +126,14 @@ runSuperMarket()
 		maxServTimeAll = (maxServTimeAll < st) ? st : maxServTimeAll;
 	}
 
-	printf("For all simulation; "
-		"avg/min/max wait time: %d/%d/%d; "
-		"avg/min/max service time: %d/%d/%d "
+	//because some customers will never be serviced, the wait time is high
+	sprintf(stats, "%s\n**********\nFor all simulation;\n"
+		"avg/min/max wait time: %d/%d/%d;\n"
+		"avg/min/max service time: %d/%d/%d\n"
 		"max waiting queue size: %d\n",
-		sumWaitTimeAll / Customers.NumInList(), minWaitTimeAll, maxWaitTimeAll,
-		sumServTimeAll / Customers.NumInList(), minServTimeAll, maxServTimeAll,
+		stats, sumWaitTimeAll / Customers.NumInList()/60, minWaitTimeAll/60, maxWaitTimeAll/60,
+		sumServTimeAll / Customers.NumInList()/60, minServTimeAll/60, maxServTimeAll/60,
 		maxWaitingQueueAll);
+
+	printf(stats);
 }

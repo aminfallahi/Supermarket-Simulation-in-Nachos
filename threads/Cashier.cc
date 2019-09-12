@@ -15,7 +15,7 @@ Cashier::Cashier()
 	id = lastId;
 	numInLine = 0;
 	status = false;
-	printf("NEW CASHIER with id %d lastId %d\n", id, lastId);
+	//printf("NEW CASHIER with id %d lastId %d\n", id, lastId);
 	moreThan3Time = 0;
 	//lastId++;
 }
@@ -92,7 +92,7 @@ void Cashier::addCustomer(Customer *cust)
 {
 	line.Append(cust);
 	numInLine++;
-	printf("Cashier: Adding customer %d to cashier %d line. Now it has %d customers\n", cust->getId(), id, numInLine);
+	printf("Adding customer %d to cashier %d line. Now it has %d customers\n", cust->getId(), id, numInLine);
 }
 
 int Cashier::getId()
