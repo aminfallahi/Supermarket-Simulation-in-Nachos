@@ -26,11 +26,6 @@ ThreadTest()
 	srand(time(NULL));
 	Customer::lastId = 0;
 	char stats[10000];
-	/*	int a=5;
-		sprintf(stats,"hello %d %d",a,a);
-		sprintf(stats,"%s hello",stats);
-		printf(stats);
-		exit(1);*/
 
 	List<Customer*> Customers;
 
@@ -42,7 +37,7 @@ ThreadTest()
 		sumServTimeAll = 0, minServTimeAll = 10000, maxServTimeAll = 0,
 		maxWaitingQueueAll = 0;
 
-	for (hour = 2; hour <= 7; hour++) {
+	for (hour = 2; hour < 7; hour++) {
 
 		//FOR STATS
 		//numCustInHourST holds the number of customers who have got service in each hour
@@ -53,9 +48,6 @@ ThreadTest()
 			sumOpenLines = 0, maxOpenLines = 0,
 			sumWaitingQueue = 0, minWaitingQueue = 10000, maxWaitingQueue = 0;
 
-		//this is to keep track of customers who have entered the supermarket during current hour
-		List<Customer*> hourCustomers;
-
 		for (minute = 0; minute < 60; minute++) {
 			printf("----------\nTIME: %02d:%02d\n", hour, minute);
 			if (sm.isPeakHour(hour))
@@ -64,13 +56,11 @@ ThreadTest()
 				custNum = rand() % 6; //reg hours 0-5 customers per minute
 			if (custNum > 0)
 				custSec = 60 / custNum;
-			//printf("Hour is %d cust num is %d\n", hour, custNum);
 			for (second = 0; second < 60; second++) {
 				if (custNum != 0 and second % custSec == 0) {
 					sumCust++;
 					Customer* cust = new Customer; //create new customer
 					Customers.Append(cust);
-					hourCustomers.Append(cust);
 					cust->setNumOfItems(rand() % 36 + 5);
 
 					sm.addCustomer(cust);
@@ -110,13 +100,15 @@ ThreadTest()
 			maxServTime = (maxServTime < st) ? st : maxServTime;
 			custIter.Item()->resetHourlyTimes();
 		}
-		sprintf(stats, "%s\n----------\nHour %d:\n   Average number of customers arriving for checkout: %d\n"
+		sprintf(stats, "%s\n----------\nFROM 0%d:00:00 to 0%d:59:59:\n"
+			"   average number of customers arriving for checkout (entered store): %d\n"
+			"   average number of customers arriving for checkout (got service): %d\n"
 			"   average/shortest/longest waiting time: %d / %d / %d\n"
 			"   average/shortest/longest service time: %d / %d / %d\n"
 			"   average number of open lines: %d\n"
 			"   maximum number of open lines: %d\n"
 			"   average/smallest/largest number of customers in the waiting queue: %d / %d / %d\n",
-			stats, hour, sumCust / 60,
+			stats, hour, hour, sumCust / 60, numCustInHourST / 60,
 			sumWaitTime / numCustInHourWT / 60, minWaitTime / 60, maxWaitTime / 60,
 			sumServTime / numCustInHourST / 60, minServTime / 60, maxServTime / 60,
 			sumOpenLines / 60,
@@ -124,7 +116,7 @@ ThreadTest()
 			sumWaitingQueue / 60, minWaitingQueue, maxWaitingQueue);
 
 		int* moreThan3 = sm.getCashiersStats();
-		sprintf(stats, "%saverage time each cashier will have more than 3 customers standing in line: \n", stats, hour);
+		sprintf(stats, "%s   average time each cashier will have more than 3 customers standing in line: \n", stats, hour);
 		int i;
 		for (i = 0; i < 10; i++) {
 			sprintf(stats, "%s      cashier #%d %d\n", stats, i, moreThan3[i] / 60);
@@ -147,9 +139,9 @@ ThreadTest()
 
 	//because some customers will never be serviced, the wait time is high
 	sprintf(stats, "%s\n**********\nFor all simulation;\n"
-		"avg/min/max wait time: %d/%d/%d;\n"
-		"avg/min/max service time: %d/%d/%d\n"
-		"max waiting queue size: %d\n",
+		"average/shortest/longest waiting time: %d/%d/%d;\n"
+		"average/shortest/longest service time: %d/%d/%d\n"
+		"maximum number of customers in the waiting queue at any time: %d\n",
 		stats, sumWaitTimeAll / Customers.NumInList() / 60, minWaitTimeAll / 60, maxWaitTimeAll / 60,
 		sumServTimeAll / Customers.NumInList() / 60, minServTimeAll / 60, maxServTimeAll / 60,
 		maxWaitingQueueAll);
