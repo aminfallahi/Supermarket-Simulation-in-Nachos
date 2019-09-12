@@ -25,12 +25,17 @@ public:
     void setDone();
     bool isDone();
     int getWaitTime();
+    int getHourlyTimeProcessed();
+    int getHourlyWaitTime();
+    void resetHourlyTimes();
 private:
     int numOfItems; //Customers, checking out have a random number of items, average range between 5 to 40 items.
     int timeProcessed; //Time in front of line in seconds=SERVICE TIME
     int id;
     int waitTime;
     bool done;
+    int hourlyTimeProcessed;
+    int hourlyWaitTime;
 };
 
 #endif	/* CUSTOMER_H */

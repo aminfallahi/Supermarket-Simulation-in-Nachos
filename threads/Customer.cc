@@ -16,6 +16,8 @@ Customer::Customer()
 	timeProcessed=0;
 	waitTime=0;
 	done=false;
+	hourlyTimeProcessed=0;
+	hourlyWaitTime=0;
 }
 
 /*Customer::Customer(const Customer& orig)
@@ -40,6 +42,7 @@ bool operator==(const Customer &c1, const Customer &c2){
 
 void Customer::incrementTimeProcessed(){
 	timeProcessed++;
+	hourlyTimeProcessed++;
 }
 
 int Customer::getTimeProcessed(){
@@ -53,6 +56,7 @@ int Customer::getId(){
 void Customer::incrementWaitTime()
 {
 	waitTime++;
+	hourlyWaitTime++;
 }
 
 void Customer::setDone()
@@ -63,4 +67,25 @@ void Customer::setDone()
 int Customer::getWaitTime()
 {
 	return waitTime;
+}
+
+bool Customer::isDone()
+{
+	return done;
+}
+
+int Customer::getHourlyTimeProcessed()
+{
+	return hourlyTimeProcessed;
+}
+
+int Customer::getHourlyWaitTime()
+{
+	return hourlyWaitTime;
+}
+
+void Customer::resetHourlyTimes()
+{
+	hourlyTimeProcessed=0;
+	hourlyWaitTime=0;
 }

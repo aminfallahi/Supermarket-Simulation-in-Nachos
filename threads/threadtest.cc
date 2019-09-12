@@ -45,7 +45,9 @@ ThreadTest()
 	for (hour = 2; hour <= 7; hour++) {
 
 		//FOR STATS
-		int sumCust = 0,
+		//numCustInHourST holds the number of customers who have got service in each hour
+		//numCustInHourWT holds the number of customers who have waited in store in each hour
+		int sumCust = 0, numCustInHourST = 0, numCustInHourWT = 0,
 			sumWaitTime = 0, minWaitTime = 10000, maxWaitTime = 0,
 			sumServTime = 0, minServTime = 10000, maxServTime = 0,
 			sumOpenLines = 0, maxOpenLines = 0,
@@ -90,33 +92,39 @@ ThreadTest()
 		}
 
 		//FOR STATS: calculating output numbers
-		ListIterator<Customer*> custIter(&hourCustomers);
+		ListIterator<Customer*> custIter(&Customers);
 		for (; !custIter.IsDone(); custIter.Next()) {
-			int wt = custIter.Item()->getWaitTime();
-			int st = custIter.Item()->getTimeProcessed();
-			sumWaitTime += wt;
-			sumServTime += st;
+			int wt = custIter.Item()->getHourlyWaitTime();
+			int st = custIter.Item()->getHourlyTimeProcessed();
+			if (wt != 0) {
+				sumWaitTime += wt;
+				numCustInHourWT++;
+			}
+			if (st != 0) {
+				sumServTime += st;
+				numCustInHourST++;
+			}
 			minWaitTime = (minWaitTime < wt) ? minWaitTime : wt;
 			maxWaitTime = (maxWaitTime < wt) ? wt : maxWaitTime;
 			minServTime = (minServTime < st) ? minServTime : st;
 			maxServTime = (maxServTime < st) ? st : maxServTime;
+			custIter.Item()->resetHourlyTimes();
 		}
-
-		sprintf(stats, "%s\n----------\nHour %d:\n  Average number of customers arriving for checkout: %d;\n"
+		sprintf(stats, "%s\n----------\nHour %d:\n   Average number of customers arriving for checkout: %d\n"
 			"   average/shortest/longest waiting time: %d / %d / %d\n"
 			"   average/shortest/longest service time: %d / %d / %d\n"
 			"   average number of open lines: %d\n"
 			"   maximum number of open lines: %d\n"
 			"   average/smallest/largest number of customers in the waiting queue: %d / %d / %d\n",
 			stats, hour, sumCust / 60,
-			sumWaitTime / sumCust / 60, minWaitTime / 60, maxWaitTime / 60,
-			sumServTime / sumCust / 60, minServTime / 60, maxServTime / 60,
+			sumWaitTime / numCustInHourWT / 60, minWaitTime / 60, maxWaitTime / 60,
+			sumServTime / numCustInHourST / 60, minServTime / 60, maxServTime / 60,
 			sumOpenLines / 60,
 			maxOpenLines,
 			sumWaitingQueue / 60, minWaitingQueue, maxWaitingQueue);
 
 		int* moreThan3 = sm.getCashiersStats();
-		sprintf(stats, "%saverage time each casher will have more than 3 customers standing in line: \n", stats, hour);
+		sprintf(stats, "%saverage time each cashier will have more than 3 customers standing in line: \n", stats, hour);
 		int i;
 		for (i = 0; i < 10; i++) {
 			sprintf(stats, "%s      cashier #%d %d\n", stats, i, moreThan3[i] / 60);
