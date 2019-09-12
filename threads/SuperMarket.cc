@@ -58,11 +58,11 @@ void SuperMarket::addCustomer(Customer *cust)
 		}
 	}
 	if (!custAssigned) {
-		if (waitingQueue.NumInList() < 10) {
-			printf("Adding customer %d to waiting queue.\n", cust->getId());
-			waitingQueue.Append(cust);
-		} else { //open new cashier move 5 people to it from front of line then add this one to waiting queue
-			printf("Waiting queue is full. Opening new cashier. We currently have %d open cashiers.\n", getNumOfOpenCashiers());
+		printf("Adding customer %d to waiting queue\n", cust->getId());
+		waitingQueue.Append(cust);
+		if (waitingQueue.NumInList() >= 10) {
+			//open new cashier move 5 people to it from front of line then add this one to waiting queue
+			printf("Waiting queue has %d customers. Opening new cashier. We currently have %d open cashiers.\n", waitingQueue.NumInList(), getNumOfOpenCashiers());
 			if (maxCashiers > getNumOfOpenCashiers()) {
 
 				ListIterator<Cashier*> iterator(&cashiers);
@@ -82,11 +82,10 @@ void SuperMarket::addCustomer(Customer *cust)
 						break;
 					}
 				}
-				printf("Adding customer %d to waiting queue\n", cust->getId());
-				waitingQueue.Append(cust);
+
 
 			} else
-				printf("OOO We can't open new cashier. We already have 10.\n");
+				printf("We can't open new cashier. We already have 10.\n");
 
 		}
 	}
